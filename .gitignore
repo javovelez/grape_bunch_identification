@@ -1,0 +1,24 @@
+.idea/
+# Ignore compiled Python files
+__pycache__/
+*.pyc
+
+# Ignore virtual environment files
+venv/
+env/
+
+# Ignore any generated files from Open3D
+*/build/
+*/build_cuda/
+*/build_cpu/
+*/build_dpcpp/
+
+# Ignore log files
+*.log
+log/
+
+# Ignore system and hidden files
+.DS_Store
+*.swp
+._*
+
