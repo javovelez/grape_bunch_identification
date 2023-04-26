@@ -39,7 +39,7 @@ def get_mean_distance_of_neighbors(cloud, n_neighbors=1):
     distances_mean = mean(distances_list)
     return distances_mean
 
-def get_median_distance_of_neighbors(cloud, n_neighbors=2):
+def get_median_distance_of_neighbors(cloud, n_neighbors=2, return_tree = False):
     index_pair_set = set()
     index_pair_list = []
     pc_tree = o3d.geometry.KDTreeFlann(cloud)
@@ -53,7 +53,41 @@ def get_median_distance_of_neighbors(cloud, n_neighbors=2):
         # for i, distance in enumerate(distances):
         distances_list.append(distance)
     distances_median = median(distances_list)
-    return distances_median
+    if not return_tree:
+        return distances_median
+    else:
+        return distances_median, pc_tree
+
+def filter_by_median(cloud, cloud_name, n_neighbors=6):
+    median_dist, pc_tree = get_median_distance_of_neighbors(cloud, n_neighbors, True)
+    points = np.asarray(cloud.points)
+    large_points_to_delete = []
+    short_points_to_delete = []
+    for point_idx, point in enumerate(points): #busco que la distancia al primer vecino sea menor que 3 veces la distancia mediana
+        a, idxs, squared_distances = pc_tree.search_knn_vector_3d(point, 3)
+        distance = np.sqrt(squared_distances)
+        distance = np.delete(distance, [0], axis=0)
+        distance = np.mean(distance)
+        if distance > 2 * median_dist:
+            large_points_to_delete.append(point_idx)
+        if distance< 0.3 * median_dist:
+            short_points_to_delete.append(point_idx)
+    points = np.delete(points, large_points_to_delete, axis=0)
+    if len(large_points_to_delete) != 0:
+        print(f'Se eliminaron {len(large_points_to_delete)} puntos lejanos de {cloud_name}')
+    if len(short_points_to_delete) != 0:
+        print(f'Se eliminaron {len(short_points_to_delete)} puntos repetidos de  {cloud_name}')
+    cloud.points = o3d.utility.Vector3dVector(points)
+    return cloud
+
+def filter_clouds(cloud_matrix):
+    print('##################################################')
+    n_clouds = len(cloud_matrix)
+    for i in range(n_clouds):
+        cloud_matrix[i][1] = filter_by_median(cloud_matrix[i][1], cloud_matrix[i][0])
+
+    return cloud_matrix
+
 
 def delete_points(cl, n_points):
     """

@@ -72,6 +72,9 @@ def get_RT_in_z_direction(point, neighbor, dist):
         R: numpy float matrix, rotation matrix
         centroid_B: numpy float array, translation
     """
+    # Lo siguiente son unas pruebas de debug porque había nubes espejadas
+    # r = [-1, 1]
+    # signo = random.choice(r)
     A = np.asarray([[0., 0., 0.], [0., 0., dist]])
     B = np.asarray([point, neighbor])
     centroid_A = np.mean(A, axis=0)
@@ -333,7 +336,7 @@ def icp_scaled_and_aligned(source, target, threshold_percentage, n_neighbors, an
                     if distance_criterion == 'min':
                         reference_distance = get_minimum_distance(source_copy)
                     elif distance_criterion == 'median':
-                        reference_distance = get_median_distance_of_neighbord(source_copy)
+                        reference_distance = get_median_distance_of_neighbors(source_copy)
                     elif distance_criterion == 'mean':
                         reference_distance = get_mean_distance_of_neighbors(source_copy, 5)
                     elif distance_criterion == 'target': #es la distancia del par target en esta iteración
