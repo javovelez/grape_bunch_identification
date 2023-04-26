@@ -46,7 +46,7 @@ def main(args=None):
         ##### hiper-parámetros ####
         n_neighbors = 1             # cantidad de vecinos por cada punto de una nube con los que va a intentar alinear
         distances_tolerance = 0.2   # Solo comparará puntos que en ambas nubes estén a distancias similares ) +/- 20%
-        threshold_percentage_list = [0., 0.2, 0.3]  # porcentaje de la distancia en la nube a usar como trheshold
+        threshold_percentage_list = [0.1, 0.2, 0.3]  # porcentaje de la distancia en la nube a usar como trheshold
         angle_step_list = [1/4]     # paso de rotación de la nube "source" alrededor del eje z
 
         start_time = time()
