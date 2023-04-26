@@ -1,7 +1,8 @@
 import open3d as o3d
 import numpy as np
 import copy
-from statistics import median
+from statistics import median, mean
+
 
 def get_minimum_distance(cloud):
     """
@@ -23,7 +24,7 @@ def get_minimum_distance(cloud):
             min_distance = distance
     return min_distance
 
-def get_mean_distance(cloud, n_neighbors=1):
+def get_mean_distance_of_neighbors(cloud, n_neighbors=1):
     index_pair_set = set()
     index_pair_list = []
     pc_tree = o3d.geometry.KDTreeFlann(cloud)
@@ -35,10 +36,10 @@ def get_mean_distance(cloud, n_neighbors=1):
         distances = np.sqrt(squared_distances)
         for i, distance in enumerate(distances):
             distances_list.append(distance)
-    distances_mean = statistics.median(distances_list)
+    distances_mean = mean(distances_list)
     return distances_mean
 
-def get_median_distance_to_second_neighbord(cloud, n_neighbors=2):
+def get_median_distance_of_neighbors(cloud, n_neighbors=2):
     index_pair_set = set()
     index_pair_list = []
     pc_tree = o3d.geometry.KDTreeFlann(cloud)
@@ -109,14 +110,6 @@ def add_points(pc, points_to_add):
     points = np.asarray(pc.points)
     points = np.append(points, points_to_add, axis=0)
     return o3d.utility.Vector3dVector(points)
-
-def get_neighbors(pc, n_neighbors):
-    pc_tree = o3d.geometry.KDTreeFlann(pc)
-    points = np.asarray(pc.points)
-    # points = np.append(points, [[0, 0, 0]], axis=0)
-    for point in points:
-        _, idxs, _ = pc_tree.search_knn_vector_3d(point, n_neighbors + 1)
-        yield points[idxs[0], :], points[idxs[1:], :]
 
 def get_neighbors_to_filter(pc, n_neighbors, median_proportion=0.3):
     index_pair_set = set()

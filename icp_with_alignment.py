@@ -3,7 +3,8 @@ import random
 import open3d as o3d
 import numpy as np
 from viewer import point_cloud_viewer
-from cloud_management import get_minimum_distance,conform_point_cloud, get_median_distance_to_second_neighbord
+from cloud_management import get_minimum_distance,conform_point_cloud, get_median_distance_of_neighbors, \
+    get_mean_distance_of_neighbors
 import statistics
 import bisect
 
@@ -332,7 +333,9 @@ def icp_scaled_and_aligned(source, target, threshold_percentage, n_neighbors, an
                     if distance_criterion == 'min':
                         reference_distance = get_minimum_distance(source_copy)
                     elif distance_criterion == 'median':
-                        reference_distance = get_median_distance_to_second_neighbord(source_copy)
+                        reference_distance = get_median_distance_of_neighbord(source_copy)
+                    elif distance_criterion == 'mean':
+                        reference_distance = get_mean_distance_of_neighbors(source_copy, 5)
                     elif distance_criterion == 'target': #es la distancia del par target en esta iteración
                         reference_distance = dist_target
                     # Si la nube source se achica mucho respecto a la target

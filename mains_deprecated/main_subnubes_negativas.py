@@ -11,7 +11,7 @@ from time import time
 import glob
 
 if __name__ == "__main__":
-    path = "../input/subnubes"
+    path = "../../input/subnubes"
     pattern = "*.ply"
     output_path = '../output/salidasICP/subnubes_negativas_sin_ruido'
     folders = os.listdir(path)

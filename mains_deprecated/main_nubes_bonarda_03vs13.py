@@ -15,14 +15,14 @@ if __name__ == "__main__":
     new_clouds = []
     salida = "../output/salidasICP/bonarda03_vs_bonarda13_sin_ruido/"
 
-    f = open("../input/nubes_completas/bonarda/frames03/paths.txt")
+    f = open("../../input/nubes_completas/bonarda/frames03/paths.txt")
     for bunch in f:
         old_names.append(bunch[0:-1])
         cloud = o3d.io.read_point_cloud("../input/nubes_completas/bonarda/frames03/"+bunch[0:-1])
         old_clouds.append(cloud)
     f.close()
 
-    f = open("../input/nubes_completas/bonarda/frames13/paths.txt")
+    f = open("../../input/nubes_completas/bonarda/frames13/paths.txt")
     for bunch in f:
         new_names.append(bunch[0:-1])
         cloud = o3d.io.read_point_cloud("../input/nubes_completas/bonarda/frames13/"+bunch[0:-1])

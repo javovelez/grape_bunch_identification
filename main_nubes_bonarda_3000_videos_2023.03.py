@@ -29,7 +29,7 @@ def main(args=None):
     parser.add_argument('-o', '--output_dir', type=str, required=True)
     args = parser.parse_args(args)
     for dir in dirs:
-        inputs_path = args.input_dir+dir+"/labels.csv"
+        inputs_path = args.input_dir+dir+"labels.csv"
         inputs_df = pd.read_csv(inputs_path)
         n_clouds = len(inputs_df.index)
         clouds = {} #dict containing point clouds
@@ -46,13 +46,12 @@ def main(args=None):
         ##### hiper-parámetros ####
         n_neighbors = 1             # cantidad de vecinos por cada punto de una nube con los que va a intentar alinear
         distances_tolerance = 0.2   # Solo comparará puntos que en ambas nubes estén a distancias similares ) +/- 20%
-        threshold_percentage_list = [0.03]  # porcentaje de la distancia en la nube a usar como trheshold
+        threshold_percentage_list = [0.3, 0.2, 0.1]  # porcentaje de la distancia en la nube a usar como trheshold
         angle_step_list = [1/4]     # paso de rotación de la nube "source" alrededor del eje z
 
         start_time = time()
         n_clouds = len(clouds)
         for i, thresh in enumerate(threshold_percentage_list):
-            print(f"thresh: {thresh} ; iter {i+1} de {len(threshold_percentage_list)}")
             for step in angle_step_list:
                 result = np.empty((int(((n_clouds ** 2) / 2) + n_clouds/2), 10), dtype=object) #
                 counter = 0
@@ -70,18 +69,19 @@ def main(args=None):
                         start = time()
                         angle = np.pi * step
                         metric = icp_scaled_and_aligned(source, target, thresh,
-                                                        n_neighbors, angle, distance_criterion='target')
+                                                        n_neighbors, angle, distance_criterion='mean')
                         giros = 2 / step
                         result[counter, :] = cn1, metric[1], cn2, metric[2], metric[0], overlap, label, metric[3], thresh, giros
                         end_t = time()
-                        print(f'{end_t-start}')
                         # Devuelve: (cantidad de matcheos, cantidad de puntos nube source, cantidad de puntos nube target, rmse, conjunto de correspondencia)
-
-                        print(cn1+f' (n:{metric[1]})', cn2 + f' ({metric[2]})')
-                        print(f"counter: {counter+1}/{int(((len(clouds)**2)/2)+len(clouds)/2)}, matcheos: {metric[0]}, overlap: {overlap}") #
+                        print(f"thresh: {thresh} ; iter {i + 1} de {len(threshold_percentage_list)}")
+                        print(f'{cn1} (n:{metric[1]})', cn2 + f' (n:{metric[2]})')
+                        print(f'matcheos: {metric[0]}')
+                        print(f"    counter: {counter+1}/{int(((len(clouds)**2)/2)+len(clouds)/2)}, overlap: {overlap}") #
+                        print(f"    iteration time: {end_t-start} ")
                         counter += 1
                 frame = pd.DataFrame(result, columns=["nube1", "tamaño_nube1", "nube2", "tamaño_nube2", "matcheos", "overlap", "label", "rmse", "radio", "giros"])
-                path = args.output_dir + dir + "/vertical_thresh_0.6_radio_"+str(thresh)+".csv"
+                path = args.output_dir + dir + "/180_thresh_0.7_radio_"+str(thresh)+".csv"
                 frame.to_csv(path)
                 bucle_time = time()
                 print(bucle_time - start_time)

@@ -10,8 +10,6 @@ from time import time
 
 
 if __name__ == "__main__":
-    main()
-    return 0
     ##### Obtenemos nubes de los racimos #######
     bunchs_paths = "../input/grapes_paths_6.txt"
     f = open(bunchs_paths)

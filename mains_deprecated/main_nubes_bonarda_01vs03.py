@@ -13,19 +13,19 @@ if __name__ == "__main__":
     new_names = []
     old_clouds = [] # contendrá una lista de nubes
     new_clouds = []
-    salida = "../output/salidasICP/bonarda01_vs_bonarda13_sin_ruido/"
+    salida = "../output/salidasICP/bonarda01_vs_bonarda03_sin_ruido/"
 
-    f = open("../input/nubes_completas/bonarda/frames01/paths.txt")
+    f = open("../../input/nubes_completas/bonarda/frames01/paths.txt")
     for bunch in f:
         old_names.append(bunch[0:-1])
         cloud = o3d.io.read_point_cloud("../input/nubes_completas/bonarda/frames01/"+bunch[0:-1])
         old_clouds.append(cloud)
     f.close()
 
-    f = open("../input/nubes_completas/bonarda/frames13/paths.txt")
+    f = open("../../input/nubes_completas/bonarda/frames03/paths2.txt")
     for bunch in f:
         new_names.append(bunch[0:-1])
-        cloud = o3d.io.read_point_cloud("../input/nubes_completas/bonarda/frames13/"+bunch[0:-1])
+        cloud = o3d.io.read_point_cloud("../input/nubes_completas/bonarda/frames03/"+bunch[0:-1])
         new_clouds.append(cloud)
     f.close()
 
@@ -38,10 +38,10 @@ if __name__ == "__main__":
     n_old_clouds = len(old_clouds)
 
     ##### hiper-parámetros ####
-    n_neighbors = 1             # cantidad de vecinos por cada punto de una nube con los que va a intentar alinear
+    n_neighbors = 4             # cantidad de vecinos por cada punto de una nube con los que va a intentar alinear
     distances_tolerance = 0.2   # Solo comparará puntos que en ambas nubes estén a distancias similares ) +/- 20%
-    threshold_percentage_list = [0.1, 0.2, 0.3, 0.4, 0.5, 1]  # porcentaje de la distancia mínima en la nube a usar como trheshold
-    angle_step_list = [1/2]     # paso de rotación de la nube "source" alrededor del eje z
+    threshold_percentage_list = [ 0.3]  # porcentaje de la distancia mínima en la nube a usar como trheshold
+    angle_step_list = [1/2,1/4,1/8,1/16,1/32,1/64]     # paso de rotación de la nube "source" alrededor del eje z
     noise_std_dev = 0.05        # Desviación estandar de la gaussiana
                                 #   quizás debería ser un porcentaje sobre la distancia mínima
     n_points_min = 6            # número mínimo de puntos para obtener sub-nubes
@@ -69,8 +69,10 @@ if __name__ == "__main__":
     for thresh in threshold_percentage_list:
         for step in angle_step_list:
             for i in range(n_new_clouds):
+                if i != 65: continue
                 for j in range(n_old_clouds):
-                    # o3d.visualization.draw_geometries([clouds_c[j].paint_uniform_color([0, 1, 0]), clouds[i].paint_uniform_color([1, 0, 0])])
+                    if j!= 65: continue
+                    #o3d.visualization.draw_geometries([old_clouds[j].paint_uniform_color([0, 1, 0]), new_clouds[i].paint_uniform_color([1, 0, 0])])
                     source = new_clouds[i]
                     target = old_clouds[j]
                     minimun_distance = get_minimum_distance(source) # lo hice sobre source porque es la que rota sobre z
@@ -85,7 +87,7 @@ if __name__ == "__main__":
         data = pd.DataFrame(rows, columns=["nube1", "tamaño_nube1", "nube2", "tamaño_nube2", "matcheos", "rmse", "radio", "giros"])
                     # Devuelve: (cantidad de matcheos, cantidad de puntos nube source, cantidad de puntos nube target, rmse, conjunto de correspondencia)
         #data.astype({'nube1': int, 'tamaño_nube1': int, 'nube2': int, 'tamaño_nube2': int, 'matcheos': int, "giros": int})
-        path = salida+"bonarda01_vs_bonarda13_sin_ruido"+str(thresh)+".csv"
+        path = salida+"bonarda01_vs_bonarda03_sin_ruido"+str(thresh)+"_solo65.csv"
         data.to_csv(path,index=False)
         count = 0
 
