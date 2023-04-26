@@ -101,7 +101,7 @@ def main(args=None):
                         counter += 1
                 frame = pd.DataFrame(result, columns=["nube1", "tamaño_nube1", "nube2", "tamaño_nube2", "matcheos", "overlap", "label", "rmse", "radio", "giros"])
                 # path = args.output_dir + dir + "/180_thresh_0.7_radio_"+str(thresh)+".csv"
-                # frame.to_csv(path)
+                frame.to_csv(path)
                 bucle_time = time()
                 print(bucle_time - start_time)
 
