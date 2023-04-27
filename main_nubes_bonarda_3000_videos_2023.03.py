@@ -92,8 +92,8 @@ def main(args=None):
                         angle = np.pi * step
                         # for debug: comentar metric = icp_scale_and_aligned... y ver si corre hasta el final
                         #descomentar la siguiente línea
-                        # metric = icp_scaled_and_aligned(source, target, thresh,n_neighbors, angle, distance_criterion='mean')
-                        metric = [ 1, 1, 1, 0, 0, 0]
+                        metric = icp_scaled_and_aligned(source, target, thresh,n_neighbors, angle, distance_criterion='mean')
+                        # metric = [ 1, 1, 1, 0, 0, 0]
                         giros = 2 / step
 
 
