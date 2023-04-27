@@ -14,6 +14,13 @@ def get_points_ids(dir, name):
     df = df.drop(idx_ceros)
     return list(df['track_id'])
 
+def save_to_file(result, save_counter, args,dir, thresh):
+    frame = pd.DataFrame(result,
+                         columns=["nube1", "tamaño_nube1", "nube2", "tamaño_nube2", "matcheos", "overlap", "label",
+                                  "rmse", "radio", "giros"])
+    path = args.output_dir + dir + "/180_thresh_0.7_radio_" + str(thresh)+ '_' + str(save_counter) +".csv"
+    print(f'partial saving in {path}')
+    frame.to_csv(path)
 
 def main(args=None):
     if args is None:
@@ -50,7 +57,7 @@ def main(args=None):
         distances_tolerance = 0.2   # Solo comparará puntos que en ambas nubes estén a distancias similares ) +/- 20%
         threshold_percentage_list = [0.05, 0.1]   # porcentaje de la distancia en la nube a usar como trheshold
         angle_step_list = [1/4]     # paso de rotación de la nube "source" alrededor del eje z
-
+        save_interval = 100
         start_time = time()
         n_clouds = len(clouds)
 
@@ -60,8 +67,10 @@ def main(args=None):
 
         for thresh_idx, thresh in enumerate(threshold_percentage_list):
             for step in angle_step_list:
-                result = np.empty((int(((n_clouds ** 2) / 2) + n_clouds/2), 10), dtype=object) #
+                result = np.empty((save_interval, 10), dtype=object) #int(((n_clouds ** 2) / 2) + n_clouds/2)
                 counter = 0
+                local_counter = 0
+                save_counter = 0
                 stime = time()
                 for i in range(len(clouds)):
                     print("##########################################################")
@@ -83,14 +92,14 @@ def main(args=None):
                         angle = np.pi * step
                         # for debug: comentar metric = icp_scale_and_aligned... y ver si corre hasta el final
                         #descomentar la siguiente línea
-                        metric = icp_scaled_and_aligned(source, target, thresh,n_neighbors, angle, distance_criterion='mean')
-                        # metric = [ 1, 1, 1, 0, 0, 0]
+                        # metric = icp_scaled_and_aligned(source, target, thresh,n_neighbors, angle, distance_criterion='mean')
+                        metric = [ 1, 1, 1, 0, 0, 0]
                         giros = 2 / step
 
 
 
 
-                        result[counter, :] = cn1, metric[1], cn2, metric[2], metric[0], overlap, label, metric[3], thresh, giros
+                        result[local_counter, :] = cn1, metric[1], cn2, metric[2], metric[0], overlap, label, metric[3], thresh, giros
                         end_t = time()
                         # Devuelve: (cantidad de matcheos, cantidad de puntos nube source, cantidad de puntos nube target, rmse, conjunto de correspondencia)
                         print(f"thresh: {thresh} ; thresh {thresh_idx + 1} de {len(threshold_percentage_list)}")
@@ -98,10 +107,12 @@ def main(args=None):
                         print(f'matcheos: {metric[0]}, fitness: {metric[0]/metric[1]*100:2f}')
                         print(f"    counter: {counter+1}/{int(((len(clouds)**2)/2)+len(clouds)/2)}, overlap: {overlap}") #
                         print(f"    iteration time: {end_t-start} ")
+                        local_counter += 1
+                        if counter % (save_interval-1) == 0 and counter != 0:
+                            save_to_file(result, save_counter, args, dir, thresh)
+                            save_counter += 1
+                            local_counter = 0
                         counter += 1
-                frame = pd.DataFrame(result, columns=["nube1", "tamaño_nube1", "nube2", "tamaño_nube2", "matcheos", "overlap", "label", "rmse", "radio", "giros"])
-                path = args.output_dir + dir + "/180_thresh_0.7_radio_"+str(thresh)+".csv"
-                frame.to_csv(path)
                 bucle_time = time()
                 print(bucle_time - start_time)
 
