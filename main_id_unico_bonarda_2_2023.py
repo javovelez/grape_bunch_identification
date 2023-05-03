@@ -60,6 +60,7 @@ def main(args=None):
         save_interval = 100
         start_time = time()
         n_clouds = len(clouds)
+        n_menos_uno = n_clouds-1
 
         clouds = filter_clouds(clouds)
         clouds = filter_clouds(clouds)
@@ -67,13 +68,11 @@ def main(args=None):
 
         for thresh_idx, thresh in enumerate(threshold_percentage_list):
             for step in angle_step_list:
-                result = np.empty((save_interval, 10), dtype=object) #int(((n_clouds ** 2) / 2) + n_clouds/2)
+                result = np.empty((4732,10), dtype=object) #(int(((n_clouds ** 2) / 2) + n_clouds/2), 10)
                 counter = 0
-                local_counter = 0
-                save_counter = 0
                 stime = time()
                 for i in range(len(clouds)):
-                    print("##########################################################")
+                    # print("##########################################################")
                     for j in range(i, len(clouds)):
                         cn1 = clouds[i][0]
                         cn2 = clouds[j][0]
@@ -82,40 +81,44 @@ def main(args=None):
                         overlap = 0
                         source = clouds[i][1]
                         target = clouds[j][1]
-                        if cn1 == '11_VID_20230322_164954.ply':
-                            point_cloud_viewer([source, target])
-                            point_cloud_viewer([source])
-                            point_cloud_viewer([target])
+                        # if cn1 == '11_VID_20230322_164954.ply':
+                        #     point_cloud_viewer([source, target])
+                        #     point_cloud_viewer([source])
+                        #     point_cloud_viewer([target])
                         cn1_sp = cn1.split('_')
                         cn2_sp = cn2.split('_')
+
                         label = cn1_sp[0] == cn2_sp[0]
                         start = time()
                         angle = np.pi * step
                         # for debug: comentar metric = icp_scale_and_aligned... y ver si corre hasta el final
                         #descomentar la siguiente línea
-                        metric = icp_scaled_and_aligned(source, target, thresh,n_neighbors, angle, distance_criterion='mean')
-                        # metric = [ 1, 1, 1, 0, 0, 0]
-                        giros = 2 / step
+                        if label:
 
-                        result[local_counter, :] = cn1, metric[1], cn2, metric[2], metric[0], overlap, label, metric[3], thresh, giros
-                        end_t = time()
-                        # Devuelve: (cantidad de matcheos, cantidad de puntos nube source, cantidad de puntos nube target, rmse, conjunto de correspondencia)
-                        print(f"thresh: {thresh} ; thresh {thresh_idx + 1} de {len(threshold_percentage_list)}")
-                        print(f'{cn1} (n:{metric[1]})', cn2 + f' (n:{metric[2]})')
-                        print(f'matcheos: {metric[0]}, fitness: {metric[0]/metric[1]*100:2f}')
-                        print(f"    counter: {counter+1}/{int(((len(clouds)**2)/2)+len(clouds)/2)}, overlap: {overlap}") #
-                        print(f"    iteration time: {end_t-start} ")
-                        local_counter += 1
-                        if counter % (save_interval-1) == 0 and counter != 0:
-                            save_to_file(result, save_counter, args, dir, thresh)
-                            save_counter += 1
-                            local_counter = 0
-                        counter += 1
-                bucle_time = time()
-                print(bucle_time - start_time)
+                            metric = icp_scaled_and_aligned(source, target, thresh,n_neighbors, angle, distance_criterion='mean')
+                            # metric = [ 1, 1, 1, 0, 0, 0]
+                            giros = 2 / step
+
+                            result[counter, :] = cn1, metric[1], cn2, metric[2], metric[0], overlap, label, metric[3], thresh, giros
+                            end_t = time()
+                            # Devuelve: (cantidad de matcheos, cantidad de puntos nube source, cantidad de puntos nube target, rmse, conjunto de correspondencia)
+                            print(f"thresh: {thresh} ; thresh {thresh_idx + 1} de {len(threshold_percentage_list)}")
+                            print(f'{cn1} (n:{metric[1]})', cn2 + f' (n:{metric[2]})')
+                            print(f'matcheos: {metric[0]}, fitness: {metric[0]/metric[1]*100:2f}')
+                            print(f"    counter: {counter+1}/{4732}, overlap: {overlap}") #
+                            print(f"    iteration time: {end_t-start} ")
+                            counter += 1
+            print(counter)
+            frame = pd.DataFrame(result,
+                                 columns=["nube1", "tamaño_nube1", "nube2", "tamaño_nube2", "matcheos", "overlap",
+                                              "label", "rmse", "radio", "giros"])
+            path = args.output_dir + dir + "/180_thresh_0.7_radio_" + str(thresh) + '_' + ".csv"
+            print(f'saving {path}')
+            frame.to_csv(path)
+            loop_time = time()
+            print(loop_time - start_time)
 
 
-    
 
 if __name__ == "__main__":
     main()
