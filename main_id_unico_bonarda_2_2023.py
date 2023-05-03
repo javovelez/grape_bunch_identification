@@ -68,7 +68,7 @@ def main(args=None):
 
         for thresh_idx, thresh in enumerate(threshold_percentage_list):
             for step in angle_step_list:
-                result = np.empty((4732,10), dtype=object) #(int(((n_clouds ** 2) / 2) + n_clouds/2), 10)
+                result = np.empty((5531, 10), dtype=object) #(int(((n_clouds ** 2) / 2) + n_clouds/2), 10)  (int(100*10*11/2),10)
                 counter = 0
                 stime = time()
                 for i in range(len(clouds)):
@@ -105,7 +105,7 @@ def main(args=None):
                             print(f"thresh: {thresh} ; thresh {thresh_idx + 1} de {len(threshold_percentage_list)}")
                             print(f'{cn1} (n:{metric[1]})', cn2 + f' (n:{metric[2]})')
                             print(f'matcheos: {metric[0]}, fitness: {metric[0]/metric[1]*100:2f}')
-                            print(f"    counter: {counter+1}/{4732}, overlap: {overlap}") #
+                            print(f"    counter: {counter+1}/{int(100*10*11/2)}, overlap: {overlap}") #
                             print(f"    iteration time: {end_t-start} ")
                             counter += 1
             print(counter)
