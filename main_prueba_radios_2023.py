@@ -110,12 +110,14 @@ def main(args=None):
                     print(f'matcheos: {metric[0]}, fitness: {metric[0] / metric[1] * 100:2f}')
                     print(f"    counter: {counter + 1}/{int(250*251/2)}, overlap: {overlap}")  #((len(clouds) ** 2) / 2) + len(clouds) / 2
                     print(f"    iteration time: {end_t - start} ")
+                    print(local_counter)
                     local_counter += 1
-                    if counter % (save_interval - 1) == 0 and counter != 0:
+                    counter += 1
+                    if counter % save_interval == 0 and counter != 0:
                         save_to_file(result, save_counter, args, dir, thresh)
                         save_counter += 1
                         local_counter = 0
-                    counter += 1
+
             bucle_time = time()
             print(f'Tiempo transcurrido para radio {thresh}: {bucle_time - stime}')
 
