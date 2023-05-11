@@ -80,12 +80,19 @@ def filter_by_median(cloud, cloud_name, n_neighbors=6):
     cloud.points = o3d.utility.Vector3dVector(points)
     return cloud
 
-def filter_clouds(cloud_matrix):
+def filter_clouds(cloud_matrix, filt = None):
     print('##################################################')
     n_clouds = len(cloud_matrix)
-    for i in range(n_clouds):
-        cloud_matrix[i][1] = filter_by_median(cloud_matrix[i][1], cloud_matrix[i][0])
+    if filt is not None:
 
+        for i in range(n_clouds):
+            label_1 = cloud_matrix[i][2]
+            if label_1 not in filt :
+                continue
+            cloud_matrix[i][1] = filter_by_median(cloud_matrix[i][1], cloud_matrix[i][0])
+    else:
+           for i in range(n_clouds):
+                cloud_matrix[i][1] = filter_by_median(cloud_matrix[i][1], cloud_matrix[i][0])
     return cloud_matrix
 
 

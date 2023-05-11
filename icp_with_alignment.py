@@ -129,6 +129,8 @@ def icp_search_arround_z(source, target, neighbors_distance=0.8, step=np.pi / 10
             if fitness > highest_icp_fitness:
                 highest_icp_fitness = fitness
                 best_icp = icp
+            if fitness >= 0.5:
+                break
     return best_icp
 
 
@@ -320,11 +322,23 @@ def icp_scaled_and_aligned(source, target, threshold_percentage, n_neighbors, an
     n_points_source = len(source_points)
     target_points = np.asarray(target.points)
     n_points_target = len(target_points)
-
+    count = 0
+    icp = None
     for point1, nn_points1 in get_neighbors_generator(target, n_neighbors):
+        if icp is not None:
+            if icp.fitness >= 0.5:
+                break
+        if count == 100:
+            break
         for point2, nn_points2 in get_neighbors_generator(source, n_neighbors):
+            if icp is not None:
+                if icp.fitness >= 0.5:
+                    break
             for i in range(n_neighbors):
                 dist_target = np.linalg.norm(point1 - nn_points1[i])
+                if icp is not None:
+                    if icp.fitness >= 0.5:
+                        break
                 for j in range(n_neighbors):
                     dist_source = np.linalg.norm(point2 - nn_points2[j])
                     scale_factor = dist_target/dist_source
@@ -368,6 +382,9 @@ def icp_scaled_and_aligned(source, target, threshold_percentage, n_neighbors, an
                             highest_fitness = icp.fitness
                             best_icp = icp
                             # o3d.visualization.draw_geometries([target_copy, source_copy])
+                        if icp.fitness >= 0.5:
+                            break
+        count += 1
     if best_icp is not None:
         return int(best_icp.fitness * n_points_source), n_points_source, n_points_target, best_icp.inlier_rmse, np.asarray(best_icp.correspondence_set)
     else:
