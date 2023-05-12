@@ -64,7 +64,7 @@ def main(args=None):
 
         clouds = filter_clouds(clouds, ids)
         clouds = filter_clouds(clouds, ids)
-
+        continue_flag = False
         for thresh_idx, thresh in enumerate(threshold_percentage_list):
 
             result = np.empty((save_interval, 10), dtype=object)  # int(((n_clouds ** 2) / 2) + n_clouds/2)
@@ -72,6 +72,7 @@ def main(args=None):
             local_counter = 0
             save_counter = 0
             stime = time()
+            continue_label = False
             for i in range(len(clouds)):
                 # print("##########################################################")
                 for j in range(i+1, len(clouds)):
@@ -87,14 +88,18 @@ def main(args=None):
                     #     point_cloud_viewer([source, target])
                     #     point_cloud_viewer([source])
                     #     point_cloud_viewer([target])
-                    cn1_sp = cn1.split('_')
-                    cn2_sp = cn2.split('_')
+                    cn1_sp = cn1.split('_')[0]
+                    cn2_sp = cn2.split('_')[0]
                     if ids is not None:
                         if cn1_sp[0] not in ids or cn2_sp[0] not in ids:
                             continue
-                    label = cn1_sp[0] == cn2_sp[0]
-                    if cn1_sp[0] == cn2_sp[0]:
-
+                    label = cn1_sp == cn2_sp
+                    continue_label = '10_VID_20230322_165915.ply' == cn1 and '10_VID_20230322_165927.ply' == cn2
+                    if continue_label:
+                        continue_flag = True
+                        save_counter = 6
+                        continue
+                    if cn1_sp == cn2_sp and continue_flag:
                         start = time()
                         angle = np.pi * step
                         # for debug: comentar metric = icp_scale_and_aligned... y ver si corre hasta el final
