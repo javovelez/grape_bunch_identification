@@ -7,6 +7,21 @@ from viewer import point_cloud_viewer
 import bisect
 
 
+def verify_disjoint_sets(list_of_sets):
+    n = len(list_of_sets)
+    i = 0
+    while i < n-1:
+        j = i + 1
+        while j < n:
+            if list_of_sets[i].intersection(list_of_sets[j]):  # Si tienen elementos en común
+                list_of_sets[i] = list_of_sets[i].union(list_of_sets[j])  # Unimos los conjuntos
+                del list_of_sets[j]  # Eliminamos el conjunto que no es disjunto
+                n -= 1  # Actualizamos el tamaño de la lista
+            else:
+                j += 1  # Si son disjuntos, avanzamos al siguiente conjunto
+        i += 1  # Pasamos al siguiente conjunto
+    return list_of_sets
+
 
 def get_minimum_distance(cloud):
     """
@@ -98,7 +113,7 @@ def filter_outlier_by_median(cloud, cloud_name, n_neighbors=6, debug=False):
     new_points = np.delete(points, outliers_points_to_delete, axis=0)
     if len(outliers_points_to_delete) != 0:
         print(f'Se eliminaron {len(outliers_points_to_delete)} puntos lejanos de {cloud_name}')
-        filtered = True
+        # filtered = True
         new_cloud = o3d.geometry.PointCloud(o3d.utility.Vector3dVector(new_points))
         if debug:
             new_cloud.paint_uniform_color([0, 0, 1])
@@ -170,6 +185,7 @@ def filter_duplicates_by_median(cloud, cloud_name, n_neighbors=6, debug=False):
             duplicated_points_sets[set_idx] = set()
             duplicated_points_sets[set_idx].update({a, b})
             set_idx += 1
+    duplicated_points_sets = verify_disjoint_sets(duplicated_points_sets)
     if len(duplicated_points_sets) != 0:
         print(f'Se realizarán {len(duplicated_points_sets)} agrupaciones de puntos en  {cloud_name}')
         print(duplicated_points_sets)
@@ -213,13 +229,15 @@ def duplicates_filter(cloud_matrix, debug=False):
 def outliers_filter_v2(cloud_matrix, debug=False):
     print('##################################################')
     for key, cloud_data in cloud_matrix.items():
-        cloud_matrix[key] == filter_outlier_by_median(cloud_data, key, debug=debug)
+        cloud_matrix[key] = filter_outlier_by_median(cloud_data, key, debug=debug)
 
     return cloud_matrix
 
 def duplicates_filter_v2(cloud_matrix, debug=False):
     print('##################################################')
     for key, cloud_data in cloud_matrix.items():
+        if key=='35_VID_20230322_134336.ply':
+            print()
         cloud_matrix[key] = filter_duplicates_by_median(cloud_data, key, debug=debug)
 
     return cloud_matrix

@@ -330,7 +330,7 @@ def icp_scaled_and_aligned(source, target, threshold_percentage, n_neighbors, an
         if icp is not None:
             if icp.fitness >= 0.5:
                 break
-        if count == 100:
+        if count == 100:# int(len(source_points)*0.4):
             break
         for point2, nn_points2 in get_neighbors_generator(source, n_neighbors):
             if icp is not None:

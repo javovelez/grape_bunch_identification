@@ -25,10 +25,10 @@ def main():
     inputs_path = input_dir + "labels.csv"
     inputs_df = pd.read_csv(inputs_path)
     clouds = {}
-    master = open(input_dir + 'master.csv')
+    master = open(input_dir + 'master_id_unicos.csv')
     master_reader = csv.reader(master)
-    start_row = 0 # numbered from1
-    end_row = 17
+    start_row = 181 # numbered from1
+    end_row = 181
 
     for name, label in zip(inputs_df["cloud_name"], inputs_df["label"]):
         cloud = o3d.io.read_point_cloud(input_dir + name)
@@ -36,17 +36,17 @@ def main():
 
     ##### hiper-parámetros ####
     n_neighbors = 1                     # cantidad de vecinos por cada punto de una nube con los que va a intentar alinear
-    threshold_percentage_list = [0.1]   # porcentaje de la distancia en la nube a usar como trheshold
+    threshold_percentage_list = [0.05]   # porcentaje de la distancia en la nube a usar como trheshold
     step = 1/4                          # paso de rotación de la nube "source" alrededor del eje z
-    save_interval = 2
+    save_interval = 4351
     giros = 2 / step
     start_time = time()
     angle = np.pi * step
-    # clouds = outliers_filter_v2(clouds)
-    # clouds = outliers_filter_v2(clouds)
-    # clouds = outliers_filter_v2(clouds)
-    # clouds = outliers_filter_v2(clouds)
-    # clouds = duplicates_filter_v2(clouds)
+    clouds = outliers_filter_v2(clouds)
+    clouds = outliers_filter_v2(clouds)
+    clouds = outliers_filter_v2(clouds)
+    clouds = outliers_filter_v2(clouds)
+    clouds = duplicates_filter_v2(clouds)
 
     for thresh_idx, thresh in enumerate(threshold_percentage_list):
         result = np.empty((save_interval, 10), dtype=object)
