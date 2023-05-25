@@ -20,15 +20,15 @@ def save_to_file(result, start_row, end_row, output_dir, thresh):
     frame.to_csv(path)
 
 def main():
-    input_dir = 'F:/Escritorio/repo_2023/identificaci-nDeRacimos/input/2023.03_captura_2/180/thresh0.7/'
-    output_dir = 'F:/Escritorio/repo_2023/identificaci-nDeRacimos/output/2023.03_captura_2/180_completo/'
+    input_dir = '/home/jvelez/open3d_docker/data/input/180/thresh0.7/'# 'F:/Escritorio/repo_2023/identificaci-nDeRacimos/input/2023.03_captura_2/180/thresh0.7/'
+    output_dir = '/home/jvelez/open3d_docker/data/output/180/thresh0.7'# 'F:/Escritorio/repo_2023/identificaci-nDeRacimos/output/2023.03_captura_2/180_completo/'
     inputs_path = input_dir + "labels.csv"
     inputs_df = pd.read_csv(inputs_path)
     clouds = {}
     master = open(input_dir + 'master.csv')
     master_reader = csv.reader(master)
     start_row = 0 # numbered from1
-    end_row = 17
+    end_row = 70000
 
     for name, label in zip(inputs_df["cloud_name"], inputs_df["label"]):
         cloud = o3d.io.read_point_cloud(input_dir + name)
@@ -38,15 +38,17 @@ def main():
     n_neighbors = 1                     # cantidad de vecinos por cada punto de una nube con los que va a intentar alinear
     threshold_percentage_list = [0.1]   # porcentaje de la distancia en la nube a usar como trheshold
     step = 1/4                          # paso de rotación de la nube "source" alrededor del eje z
-    save_interval = 2
+    save_interval = 100
     giros = 2 / step
     start_time = time()
     angle = np.pi * step
-    # clouds = outliers_filter_v2(clouds)
-    # clouds = outliers_filter_v2(clouds)
-    # clouds = outliers_filter_v2(clouds)
-    # clouds = outliers_filter_v2(clouds)
-    # clouds = duplicates_filter_v2(clouds)
+        
+    clouds = outliers_filter_v2(clouds)
+    clouds = outliers_filter_v2(clouds)
+    clouds = outliers_filter_v2(clouds)
+    clouds = outliers_filter_v2(clouds)
+    clouds = outliers_filter_v2(clouds)
+    clouds = duplicates_filter_v2(clouds)
 
     for thresh_idx, thresh in enumerate(threshold_percentage_list):
         result = np.empty((save_interval, 10), dtype=object)
@@ -72,10 +74,8 @@ def main():
 
                     # for debug: comentar metric = icp_scale_and_aligned... y ver si corre hasta el final
                     # descomentar la siguiente línea
-                    metric = icp_scaled_and_aligned(source, target, thresh, n_neighbors, angle,
-                                                        distance_criterion='mean')
+                    metric = icp_scaled_and_aligned(source, target, thresh, n_neighbors, angle, distance_criterion='mean')
                     # metric = [1, 1, 1, 0, 0, 0]
-
 
                     result[local_counter, :] = cn1, metric[1], cn2, metric[2], metric[0], overlap, label, metric[
                             3], thresh, giros
