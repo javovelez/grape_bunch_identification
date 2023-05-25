@@ -20,8 +20,8 @@ def save_to_file(result, start_row, end_row, output_dir, thresh):
     frame.to_csv(path)
 
 def main():
-    input_dir = '/home/jvelez/open3d_docker/data/input/180/thresh0.7/'# 'F:/Escritorio/repo_2023/identificaci-nDeRacimos/input/2023.03_captura_2/180/thresh0.7/'
-    output_dir = '/home/jvelez/open3d_docker/data/output/180/thresh0.7'# 'F:/Escritorio/repo_2023/identificaci-nDeRacimos/output/2023.03_captura_2/180_completo/'
+    input_dir = '/data/input/180/thresh0.7/'# 'F:/Escritorio/repo_2023/identificaci-nDeRacimos/input/2023.03_captura_2/180/thresh0.7/'
+    output_dir = '/data/output/180/thresh0.7'# 'F:/Escritorio/repo_2023/identificaci-nDeRacimos/output/2023.03_captura_2/180_completo/'
     inputs_path = input_dir + "labels.csv"
     inputs_df = pd.read_csv(inputs_path)
     clouds = {}
@@ -42,7 +42,7 @@ def main():
     giros = 2 / step
     start_time = time()
     angle = np.pi * step
-        
+
     clouds = outliers_filter_v2(clouds)
     clouds = outliers_filter_v2(clouds)
     clouds = outliers_filter_v2(clouds)
