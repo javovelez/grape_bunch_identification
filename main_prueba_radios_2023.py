@@ -55,15 +55,19 @@ def main(args=None):
         ##### hiper-parámetros ####
         n_neighbors = 1             # cantidad de vecinos por cada punto de una nube con los que va a intentar alinear
         distances_tolerance = 0.2   # Solo comparará puntos que en ambas nubes estén a distancias similares ) +/- 20%
+
         threshold_percentage_list = [0.05]   # porcentaje de la distancia en la nube a usar como trheshold
+
         step = 1/4     # paso de rotación de la nube "source" alrededor del eje z
         save_interval = 100
         start_time = time()
         n_clouds = len(clouds)
+
         ids = None#"13" ,"15", "16", "17", "18", "19", "20", "22", "26", "29", "70", "72", "73", "75", "76", "77", "79", "80", "82", "83", "84", "86"] #"10", "11", "12",
 
         clouds = filter_clouds(clouds, ids)
         clouds = filter_clouds(clouds, ids)
+
         continue_flag = False
         for thresh_idx, thresh in enumerate(threshold_percentage_list):
 
@@ -72,10 +76,12 @@ def main(args=None):
             local_counter = 0
             save_counter = 0
             stime = time()
+
             continue_label = False
             for i in range(len(clouds)):
                 # print("##########################################################")
                 for j in range(i+1, len(clouds)):
+
 
                     cn1 = clouds[i][0]
                     cn2 = clouds[j][0]
@@ -88,18 +94,20 @@ def main(args=None):
                     #     point_cloud_viewer([source, target])
                     #     point_cloud_viewer([source])
                     #     point_cloud_viewer([target])
-                    cn1_sp = cn1.split('_')[0]
-                    cn2_sp = cn2.split('_')[0]
+
+                    cn1_sp = cn1.split('_')
+                    cn2_sp = cn2.split('_')
                     if ids is not None:
                         if cn1_sp[0] not in ids or cn2_sp[0] not in ids:
                             continue
-                    label = cn1_sp == cn2_sp
-                    continue_label = '10_VID_20230322_165915.ply' == cn1 and '10_VID_20230322_165927.ply' == cn2
+                    continue_label = '79_VID_20230321_153616.ply' == cn1 and '72_VID_20230321_162829.ply' == cn2
                     if continue_label:
                         continue_flag = True
-                        save_counter = 6
+                        save_counter = 205
                         continue
-                    if cn1_sp == cn2_sp and continue_flag:
+                    if continue_flag:
+                        label = cn1_sp[0] == cn2_sp[0]
+
                         start = time()
                         angle = np.pi * step
                         # for debug: comentar metric = icp_scale_and_aligned... y ver si corre hasta el final
@@ -109,7 +117,9 @@ def main(args=None):
                         giros = 2 / step
 
                         result[local_counter, :] = cn1, metric[1], cn2, metric[2], metric[0], overlap, label, metric[
+
                             3], thresh, giros
+
                         end_t = time()
                         # Devuelve: (cantidad de matcheos, cantidad de puntos nube source, cantidad de puntos nube target, rmse, conjunto de correspondencia)
                         print(f"thresh: {thresh} ; thresh {thresh_idx + 1} de {len(threshold_percentage_list)}")
@@ -117,6 +127,7 @@ def main(args=None):
                         print(f'matcheos: {metric[0]}, fitness: {metric[0] / metric[1] * 100:2f}')
                         print(f"    counter: {counter + 1}/{int(250*251/2)}, overlap: {overlap}")  #((len(clouds) ** 2) / 2) + len(clouds) / 2
                         print(f"    iteration time: {end_t - start} ")
+
                         local_counter += 1
                         counter += 1
                         if counter % save_interval == 0 and counter != 0:
