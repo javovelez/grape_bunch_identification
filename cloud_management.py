@@ -10,12 +10,20 @@ import bisect
 def verify_disjoint_sets(list_of_sets):
     n = len(list_of_sets)
     i = 0
+    deleted_indices = set()  # Conjunto para almacenar los índices eliminados
     while i < n-1:
+        if i in deleted_indices:  # Si el índice i ha sido eliminado, saltamos a la siguiente iteración
+            i += 1
+            continue
         j = i + 1
         while j < n:
+            if j in deleted_indices:  # Si el índice j ha sido eliminado, saltamos a la siguiente iteración
+                j += 1
+                continue
             if list_of_sets[i].intersection(list_of_sets[j]):  # Si tienen elementos en común
                 list_of_sets[i] = list_of_sets[i].union(list_of_sets[j])  # Unimos los conjuntos
                 del list_of_sets[j]  # Eliminamos el conjunto que no es disjunto
+                deleted_indices.add(j)  # Añadimos el índice j a los índices eliminados
                 n -= 1  # Actualizamos el tamaño de la lista
             else:
                 j += 1  # Si son disjuntos, avanzamos al siguiente conjunto
@@ -25,7 +33,7 @@ def verify_disjoint_sets(list_of_sets):
 
 def get_minimum_distance(cloud):
     """
-    compute the distance between all the pairs of grapes and return the minimun
+    compute the distance between all the pairs of grapes and return the minimum
     distance
     input:
         cloud: PointCloud object (open3d)
@@ -236,7 +244,7 @@ def outliers_filter_v2(cloud_matrix, debug=False):
 def duplicates_filter_v2(cloud_matrix, debug=False):
     print('##################################################')
     for key, cloud_data in cloud_matrix.items():
-        if key=='35_VID_20230322_134336.ply':
+        if key=='1_VID_20230322_173552.ply':
             print()
         cloud_matrix[key] = filter_duplicates_by_median(cloud_data, key, debug=debug)
 

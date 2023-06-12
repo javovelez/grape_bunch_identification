@@ -49,7 +49,6 @@ def main():
     clouds = outliers_filter_v2(clouds)
     clouds = outliers_filter_v2(clouds)
     clouds = outliers_filter_v2(clouds)
-    clouds = outliers_filter_v2(clouds)
 
     clouds = duplicates_filter_v2(clouds)
 
