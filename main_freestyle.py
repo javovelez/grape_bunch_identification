@@ -20,7 +20,7 @@ def save_to_file(result, start_row, end_row, output_dir, thresh):
     frame.to_csv(path)
 
 def main():
-    input_dir = '/data/freestyle/' # 'F:/Escritorio/repo_2023/identificaci-nDeRacimos/input/2023.03_captura_2/freestyle/thresh0.7/'
+    input_dir = '/data/freestyle/thresh0.7/' # 'F:/Escritorio/repo_2023/identificaci-nDeRacimos/input/2023.03_captura_2/freestyle/thresh0.7/'
     output_dir = '/data/output/freestyle/' #F:/Escritorio/repo_2023/identificaci-nDeRacimos/output/2023.03_captura_2/freestyle/'
     inputs_path = input_dir + "labels.csv"
     inputs_df = pd.read_csv(inputs_path)
