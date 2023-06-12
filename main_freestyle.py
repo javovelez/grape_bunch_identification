@@ -49,6 +49,8 @@ def main():
     clouds = outliers_filter_v2(clouds)
     clouds = outliers_filter_v2(clouds)
     clouds = duplicates_filter_v2(clouds)
+    clouds = duplicates_filter_v2(clouds)
+    clouds = duplicates_filter_v2(clouds)
 
     for thresh_idx, thresh in enumerate(threshold_percentage_list):
         result = np.empty((save_interval, 10), dtype=object)
