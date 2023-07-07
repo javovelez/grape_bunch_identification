@@ -28,7 +28,7 @@ def main():
     master = open('/data/master_180_vs_freestyle.csv')
     master_reader = csv.reader(master)
     start_row = 0 # numbered from0
-    end_row = 975113
+    end_row = #975113
 
     for name, label in zip(freestyle_inputs_df["cloud_name"], freestyle_inputs_df["label"]):
         cloud = o3d.io.read_point_cloud(freestyle_input_dir + name)
@@ -42,7 +42,7 @@ def main():
     n_neighbors = 1                     # cantidad de vecinos por cada punto de una nube con los que va a intentar alinear
     threshold_percentage_list = [0.1]   # porcentaje de la distancia en la nube a usar como trheshold
     step = 1/4                          # paso de rotación de la nube "source" alrededor del eje z
-    save_interval = 5
+    save_interval = 100
     giros = 2 / step
     start_time = time()
     angle = np.pi * step
