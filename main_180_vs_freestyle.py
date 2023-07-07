@@ -25,7 +25,7 @@ def main():
     a180_inputs_df = pd.read_csv(a180_inputs_path)
     freestyle_clouds = {}
     a180_clouds = {}
-    master = open('./' + 'master_180_vs_freestyle.csv')
+    master = open('/data/master_180_vs_freestyle.csv')
     master_reader = csv.reader(master)
     start_row = 0 # numbered from0
     end_row = 975113
