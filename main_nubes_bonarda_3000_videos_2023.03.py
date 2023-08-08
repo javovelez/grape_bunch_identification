@@ -6,7 +6,7 @@ import numpy as np
 from time import time
 import pandas as pd
 from viewer import point_cloud_viewer
-from cloud_management import filter_clouds
+from cloud_management import outliers_filter, duplicates_filter
 
 def get_points_ids(dir, name):
     df = pd.read_csv(dir + name[:-3] +'csv')
@@ -61,8 +61,13 @@ def main(args=None):
         start_time = time()
         n_clouds = len(clouds)
 
-        clouds = filter_clouds(clouds)
-        clouds = filter_clouds(clouds)
+        clouds = outliers_filter(clouds)
+        clouds = outliers_filter(clouds)
+        clouds = outliers_filter(clouds)
+        clouds = outliers_filter(clouds)
+        clouds = outliers_filter(clouds)
+        clouds = outliers_filter(clouds)
+        clouds = duplicates_filter(clouds)
 
 
         for thresh_idx, thresh in enumerate(threshold_percentage_list):
@@ -74,7 +79,7 @@ def main(args=None):
                 stime = time()
                 for i in range(len(clouds)):
                     print("##########################################################")
-                    for j in range(i, len(clouds)):
+                    for j in range(i+1, len(clouds)):
                         cn1 = clouds[i][0]
                         cn2 = clouds[j][0]
                         label_1 = clouds[i][2]
@@ -82,10 +87,7 @@ def main(args=None):
                         overlap = 0
                         source = clouds[i][1]
                         target = clouds[j][1]
-                        if cn1 == '11_VID_20230322_164954.ply':
-                            point_cloud_viewer([source, target])
-                            point_cloud_viewer([source])
-                            point_cloud_viewer([target])
+
                         cn1_sp = cn1.split('_')
                         cn2_sp = cn2.split('_')
                         label = cn1_sp[0] == cn2_sp[0]
