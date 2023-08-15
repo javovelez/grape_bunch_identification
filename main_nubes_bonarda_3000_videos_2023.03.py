@@ -58,6 +58,7 @@ def main(args=None):
         save_interval = 105
         start_time = time()
         n_clouds = len(clouds)
+        n_neighbors = 1
 
         clouds = outliers_filter(clouds)
         clouds = outliers_filter(clouds)
