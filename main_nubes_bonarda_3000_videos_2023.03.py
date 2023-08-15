@@ -53,11 +53,9 @@ def main(args=None):
 
 
         ##### hiper-parámetros ####
-        n_neighbors = 1             # cantidad de vecinos por cada punto de una nube con los que va a intentar alinear
-        distances_tolerance = 0.2   # Solo comparará puntos que en ambas nubes estén a distancias similares ) +/- 20%
-        threshold_percentage_list = [0.05, 0.1]   # porcentaje de la distancia en la nube a usar como trheshold
+        threshold_percentage_list = [0.1]   # porcentaje de la distancia en la nube a usar como trheshold
         angle_step_list = [1/4]     # paso de rotación de la nube "source" alrededor del eje z
-        save_interval = 100
+        save_interval = 105
         start_time = time()
         n_clouds = len(clouds)
 
@@ -76,7 +74,6 @@ def main(args=None):
                 counter = 0
                 local_counter = 0
                 save_counter = 0
-                stime = time()
                 for i in range(len(clouds)):
                     print("##########################################################")
                     for j in range(i+1, len(clouds)):
