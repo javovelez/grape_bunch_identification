@@ -20,15 +20,17 @@ def save_to_file(result, start_row, end_row, output_dir, thresh):
     frame.to_csv(path)
 
 def main():
-    input_dir = '/data/freestyle/thresh0.7/' # 'F:/Escritorio/repo_2023/identificaci-nDeRacimos/input/2023.03_captura_2/freestyle/thresh0.7/'
-    output_dir = '/data/output/freestyle/' #F:/Escritorio/repo_2023/identificaci-nDeRacimos/output/2023.03_captura_2/freestyle/'
+    input_dir = '/data/freestyle_v2/' # 'F:/Escritorio/repo_2023/identificaci-nDeRacimos/input/2023.03_captura_2/freestyle/thresh0.7/'
+    output_dir = '/data/output/freestyle_v2/' #F:/Escritorio/repo_2023/identificaci-nDeRacimos/output/2023.03_captura_2/freestyle/'
     inputs_path = input_dir + "labels.csv"
     inputs_df = pd.read_csv(inputs_path)
     clouds = {}
     master = open(input_dir + 'master.csv')
     master_reader = csv.reader(master)
-    start_row = 0 # numbered from0
-    end_row = 0
+    start_row = 0 # from 0
+    end_row = 62500  # total 498500
+    save_interval = 100
+    threshold_percentage_list = [0.1]   # porcentaje de la distancia en la nube a usar como trheshold
 
     for name, label in zip(inputs_df["cloud_name"], inputs_df["label"]):
         cloud = o3d.io.read_point_cloud(input_dir + name)
@@ -36,9 +38,7 @@ def main():
 
     ##### hiper-parámetros ####
     n_neighbors = 1                     # cantidad de vecinos por cada punto de una nube con los que va a intentar alinear
-    threshold_percentage_list = [0.1]   # porcentaje de la distancia en la nube a usar como trheshold
     step = 1/4                          # paso de rotación de la nube "source" alrededor del eje z
-    save_interval = 100
     giros = 2 / step
     start_time = time()
     angle = np.pi * step
