@@ -16,8 +16,8 @@ def save_to_file(result, start_row, end_row, output_dir, thresh):
     frame.to_csv(path)
 
 def main():
-    mejoradas_input_dir = '/data/180_mejoradas_v3/thresh0.7/' #  'F:/Escritorio/repo_2023/identificaci-nDeRacimos/src/180_mejoradas_v2/thresh0.7/' # #
-    a180_input_dir = '/data/180_mix_v2/thresh0.7/' # 'F:/Escritorio/repo_2023/identificaci-nDeRacimos/src/180/thresh0.7/' #'/data/180/thresh0.7/' # 'F:/Escritorio/repo_2023/identificaci-nDeRacimos/input/2023.03_captura_2/180/thresh0.7/'
+    mejoradas_input_dir = '/data/180_v7/' #  'F:/Escritorio/repo_2023/identificaci-nDeRacimos/src/180_mejoradas_v2/thresh0.7/' # #
+    a180_input_dir = '/data/180_v5/' # 'F:/Escritorio/repo_2023/identificaci-nDeRacimos/src/180/thresh0.7/' #'/data/180/thresh0.7/' # 'F:/Escritorio/repo_2023/identificaci-nDeRacimos/input/2023.03_captura_2/180/thresh0.7/'
     output_dir = '/data/output/180_mejoradas_v3/thresh0.7/' # 'F:/Escritorio/repo_2023/identificaci-nDeRacimos/output/2023.03_captura_2/180_vs_mejoradas_180_v2/'# '/data/output/180_mejoradas/thresh0.7/' #
     mejoradas_180_inputs_path = mejoradas_input_dir + "labels.csv"
     a180_inputs_path = a180_input_dir + "labels.csv"
@@ -25,10 +25,10 @@ def main():
     a180_inputs_df = pd.read_csv(a180_inputs_path)
     mejoradas_180_clouds = {}
     a180_clouds = {}
-    master = open('master_180_old_vs_new_v3.csv')#/data/
+    master = open('master_180_old_vs_new_v7git .csv')#/data/
     master_reader = csv.reader(master)
     start_row = 0 # numbered from0
-    end_row = 21097 #80989
+    end_row = 11963 #
     save_interval = 100
     threshold_percentage_list = [0.1]   # porcentaje de la distancia en la nube a usar como trheshold
 
@@ -42,7 +42,7 @@ def main():
 
     ##### hiper-parámetros ####
     n_neighbors = 1                     # cantidad de vecinos por cada punto de una nube con los que va a intentar alinear
-    step = 1/4                          # paso de rotación de la nube "source" alrededor del eje z
+    step = 1/4                          # paso de rotación de la nube "source_cloud" alrededor del eje z
     giros = 2 / step
     start_time = time()
     angle = np.pi * step
@@ -95,7 +95,7 @@ def main():
                     result[local_counter, :] = cn1, metric[1], cn2, metric[2], metric[0], overlap, label, metric[
                             3], thresh, giros
 
-                    # Devuelve: (cantidad de matcheos, cantidad de puntos nube source, cantidad de puntos nube target,
+                    # Devuelve: (cantidad de matcheos, cantidad de puntos nube source_cloud, cantidad de puntos nube target_cloud,
                     # rmse, conjunto de correspondencia)
 
                     end_t = time()
