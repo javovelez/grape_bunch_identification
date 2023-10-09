@@ -20,15 +20,15 @@ def save_to_file(result, start_row, end_row, output_dir, thresh):
     frame.to_csv(path)
 
 def main():
-    input_dir = '/data/180_v5/'# 'F:/Escritorio/repo_2023/identificaci-nDeRacimos/input/2023.03_captura_2/180/thresh0.7/'
-    output_dir = '/data/output/180_v5/'#F:/Escritorio/repo_2023/identificaci-nDeRacimos/output/2023.03_captura_2/180_completo/'
+    input_dir =  '/data/mejores_no_espejadas_180/'
+    output_dir = '/data/output/mejores_no_espejadas_180/' # '/data/output/180_v5/'#
     inputs_path = input_dir + "labels.csv"
     inputs_df = pd.read_csv(inputs_path)
     clouds = {}
     master = open(input_dir + 'master.csv')
     master_reader = csv.reader(master)
     start_row = 0 # numbered from1
-    end_row = 62499# 480689
+    end_row = 125000 # 496505
     threshold_percentage_list = [0.1]   # porcentaje de la distancia en la nube a usar como trheshold
     save_interval = 100
 
@@ -38,7 +38,7 @@ def main():
 
     ##### hiper-parámetros ####
     n_neighbors = 1                     # cantidad de vecinos por cada punto de una nube con los que va a intentar alinear
-    step = 1/4                          # paso de rotación de la nube "source" alrededor del eje z
+    step = 1/4                          # paso de rotación de la nube "source_cloud" alrededor del eje z
     giros = 2 / step
     start_time = time()
     angle = np.pi * step
@@ -81,7 +81,7 @@ def main():
                     result[local_counter, :] = cn1, metric[1], cn2, metric[2], metric[0], overlap, label, metric[
                             3], thresh, giros
 
-                    # Devuelve: (cantidad de matcheos, cantidad de puntos nube source, cantidad de puntos nube target,
+                    # Devuelve: (cantidad de matcheos, cantidad de puntos nube source_cloud, cantidad de puntos nube target_cloud,
                     # rmse, conjunto de correspondencia)
 
                     end_t = time()
